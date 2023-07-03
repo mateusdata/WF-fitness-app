@@ -4,7 +4,8 @@ import PublicRoutes from "./public/publicRoutes";
 import PrivateRoutes from "./private/privateRoutes";
 
 const Routes = () => {
-  const { logado } = useContext(Context);
+  const { logado, } = useContext(Context);
+
   return !logado ? <PublicRoutes /> : <PrivateRoutes /> ;
 };
 

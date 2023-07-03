@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   StyleSheet,
@@ -17,12 +17,31 @@ import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "./styles";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
+import axios from "axios";
 const SigIn = () => {
-  const { login } = useContext(Context);
+  const { login, tipo } = useContext(Context);
   const navigation = useNavigation();
   const [isFocus, setIsFocus] = useState(true);
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+
   const handleLogin = () => {
-    //logica para fazer o login no progredir
+    if(phone && password){
+      axios.post("https://b9c5-2804-7d74-de-3500-b610-59f2-42d6-f8d8.ngrok-free.app/login",{
+        phone,
+        password
+      }).then((response)=>{
+        if(response.data.length ===0){
+          alert("credenciais incorretas")
+          return;
+        }
+        const{telefone, nome, tipo}= response.data[0]
+        if(telefone && nome){
+          console.log(tipo);
+          login(telefone, nome, tipo)
+        }
+      }).catch((erro)=>console.log("erro"));
+    }
   };
   return (
     <>
@@ -57,8 +76,9 @@ const SigIn = () => {
               color="black"
             />
             <TextInput
+             onChangeText={(e)=>setPhone(e)}
               autoFocus={true}
-              placeholder="Email"
+              placeholder="Telefone"
               style={styles.input}
             />
           </View>
@@ -78,6 +98,7 @@ const SigIn = () => {
               color="black"
             />
             <TextInput
+              onChangeText={(e)=>setPassword(e)}
               placeholder="Senha"
               style={styles.input}
               secureTextEntry
@@ -96,7 +117,7 @@ const SigIn = () => {
             <Text style={styles.textAcess}>Esqueci minha senha</Text>
           </TouchableOpacity>
           <View style={styles.viewPresable}>
-            <TouchableOpacity onPress={() => login()} style={styles.pressable}>
+            <TouchableOpacity onPress={() => handleLogin()} style={styles.pressable}>
               <Text style={styles.textPresable}>Fazer login</Text>
             </TouchableOpacity>
           </View>

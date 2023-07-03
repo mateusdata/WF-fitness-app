@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Entypo } from "@expo/vector-icons";
 import Formulario from "../../components/forms/forms";
+import Personal from "../../pages/personal/personal";
 
 
 const Tab = createBottomTabNavigator();
@@ -104,6 +105,9 @@ const PrivateRoutes = () => {
                 tabBarLabel: "Alunos",
               }}
             />
+
+
+          <Tab.Screen name="personal" component={Personal}/>
           </Tab.Navigator>
         )}
       </AppStack.Screen>

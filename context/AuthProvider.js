@@ -8,48 +8,49 @@ import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(false);
   const [nome, seName] = useState("");
-  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(true);
+  const [tipo, setTipo] = useState("");
+
 
   useEffect(() => {
     AsyncStorage.getItem("usuario").then((response)=>{
         setUser(response);
-        setTimeout(() => {
-            setLoading(false)
-        }, 2000);
-    })
+        let recovere =  JSON.parse(response);
+        setLoading(false)
+    }).catch((err)=>console.log("err"))
   }, []);
 
-  const login = async () => {
+  const login = async (phoneReq, nomeUser, userTipo) => {
     const data = {
-      token: "ads2dsd3asd5",
-      user: { name: "alunoProSaber", email: "prosaber@gmail.com" },
+      user: { nomeUser,  phoneReq, userTipo},
     };
     const { user } = data;
-
-    seName(data.user.name);
-    setEmail(data.user.email);
+   
+    console.log(data);
+    seName(data?.user?.nomeUser);
+    setPhone(data?.user?.phoneReq);
     setUser(user);
     setLoading(true);
     await AsyncStorage.setItem("usuario", JSON.stringify(data.user)).then((response)=>{
-      setInterval(() => {
-        setLoading(false);
-      }, 500);
-    });
+      setLoading(false);
+    }).catch((err)=>console.log("erro"));
   };
 
-  const logout = async () => {
+  const logout =  () => {
     setLoading(true)
-    await AsyncStorage.removeItem("usuario");
-   setTimeout(() => {
-    setUser(false);
+    AsyncStorage.removeItem("usuario");
+    setTimeout(() => {
+    setUser('');
+    setTipo("");
     setLoading(false)
-   }, 500);
+    //alert(tipo)
+   }, 10);
   };
 
   if (loading) {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor:"#00635B" }}>
          <ExpoStatusBar style="light" backgroundColor="#00635B" />
 
       <StatusBar
@@ -59,13 +60,13 @@ const AuthProvider = ({ children }) => {
         })}
       />
 
-        <ActivityIndicator animating={true} color={"#0B7EBE"} size={50} />
+        <ActivityIndicator animating={true} color={"yellow"} size={50} />
       </View>
     );
   }
   return (
     <Context.Provider
-      value={{ nome, email, user, logado: !!user,login ,logout, setUser }}
+      value={{ nome, phone, user, logado: !!user,login ,logout, setUser, tipo, setTipo}}
     >
       {children}
     </Context.Provider>
